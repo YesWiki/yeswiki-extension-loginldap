@@ -179,23 +179,22 @@ if (!is_file($templatetoload)) {
     }
 }
 
-$squel = new SquelettePhp($templatetoload);
-$squel->set(
-    array(
-        "connected" => $connected,
-        "user" => ((isset($user["name"])) ? $user["name"] : ((isset($_POST["name"])) ? $_POST["name"] : '')),
-        "email" => ((isset($user["email"])) ? $user["email"] : ((isset($_POST["email"])) ? $_POST["email"] : '')),
-        "incomingurl" => $incomingurl,
-        "signupurl" => $signupurl,
-        "profileurl" => $profileurl,
-        "userpage" => $userpage,
-        "PageMenuUser" => $PageMenuUser,
-        "btnclass" => $btnclass,
-        "nobtn" => $nobtn,
-        "error" => $error
-    )
-);
+$squel = new SquelettePhp($templatetoload, 'loginldap');
 
-$output = (!empty($class)) ? '<div class="'.$class.'">'."\n".$squel->analyser()."\n".'</div>'."\n" : $squel->analyser();
+$html = $squel->render(array(
+    "connected" => $connected,
+    "user" => ((isset($user["name"])) ? $user["name"] : ((isset($_POST["name"])) ? $_POST["name"] : '')),
+    "email" => ((isset($user["email"])) ? $user["email"] : ((isset($_POST["email"])) ? $_POST["email"] : '')),
+    "incomingurl" => $incomingurl,
+    "signupurl" => $signupurl,
+    "profileurl" => $profileurl,
+    "userpage" => $userpage,
+    "PageMenuUser" => $PageMenuUser,
+    "btnclass" => $btnclass,
+    "nobtn" => $nobtn,
+    "error" => $error
+));
+
+$output = (!empty($class)) ? '<div class="'.$class.'">'."\n".$html."\n".'</div>'."\n" : $html;
 
 echo $output;
