@@ -13,12 +13,18 @@ if (!isset($this->config['ldap_port']) or empty($this->config['ldap_port'])) {
     return;
 }
 // parametres non obligatoires, on mets une valeur vide par defaut si non existant
-if (!isset($this->config['ldap_organisation'])) {
-    $this->config['ldap_group'] = '';
+if (!isset($this->config['ldap_base'])) {
+    $this->config['ldap_base'] = '';
 }
-if (!isset($this->config['ldap_group'])) {
+else {
+    if (!isset($this->config['ldap_organisation'])) {
     $this->config['ldap_group'] = '';
+    }
+    if (!isset($this->config['ldap_group'])) {
+        $this->config['ldap_group'] = '';
+    }
 }
+
 
 // Lecture des parametres de l'action
 
@@ -88,12 +94,19 @@ if ($_REQUEST["action"] == "ldaplogin") {
         $password = $_POST['password'];
 
         $ldaprdn = 'uid='.$username;
-        if (!empty($this->config['ldap_group'])) {
-            $ldaprdn .= ',ou='.$this->config['ldap_group'];
+        
+        if (!empty($this->config['ldap_base'])) {
+            $ldaprdn .= ','.$this->config['ldap_base'];
         }
-        if (!empty($this->config['ldap_organisation'])) {
-            $ldaprdn .= ',o='.$this->config['ldap_organisation'];
+        else {
+            if (!empty($this->config['ldap_group'])) {
+                $ldaprdn .= ',ou='.$this->config['ldap_group'];
+            }
+            if (!empty($this->config['ldap_organisation'])) {
+                $ldaprdn .= ',o='.$this->config['ldap_organisation'];
+            }
         }
+        
 
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
