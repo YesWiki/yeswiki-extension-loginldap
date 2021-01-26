@@ -10,3 +10,9 @@ Permet d'utiliser LDAP pour se connecter
   'ldap_organisation' => 'mon-org', // non obligatoire
   'ldap_group' => 'mon-groupe', // non obligatoire
   ```
+  ou 
+  ```
+  'ldap_host' => '127.0.0.1',
+  'ldap_port' => '389',
+  'ldap_base' => 'ou=users,dc=yunohost,dc=org'
+  ```
