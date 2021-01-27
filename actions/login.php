@@ -13,12 +13,18 @@ if (!isset($this->config['ldap_port']) or empty($this->config['ldap_port'])) {
     return;
 }
 // parametres non obligatoires, on mets une valeur vide par defaut si non existant
-if (!isset($this->config['ldap_organisation'])) {
-    $this->config['ldap_group'] = '';
+if (!isset($this->config['ldap_base'])) {
+    $this->config['ldap_base'] = '';
 }
-if (!isset($this->config['ldap_group'])) {
+else {
+    if (!isset($this->config['ldap_organisation'])) {
     $this->config['ldap_group'] = '';
+    }
+    if (!isset($this->config['ldap_group'])) {
+        $this->config['ldap_group'] = '';
+    }
 }
+
 
 // Lecture des parametres de l'action
 
@@ -88,12 +94,19 @@ if ($_REQUEST["action"] == "ldaplogin") {
         $password = $_POST['password'];
 
         $ldaprdn = 'uid='.$username;
-        if (!empty($this->config['ldap_group'])) {
-            $ldaprdn .= ',ou='.$this->config['ldap_group'];
+        
+        if (!empty($this->config['ldap_base'])) {
+            $ldaprdn .= ','.$this->config['ldap_base'];
         }
-        if (!empty($this->config['ldap_organisation'])) {
-            $ldaprdn .= ',o='.$this->config['ldap_organisation'];
+        else {
+            if (!empty($this->config['ldap_group'])) {
+                $ldaprdn .= ',ou='.$this->config['ldap_group'];
+            }
+            if (!empty($this->config['ldap_organisation'])) {
+                $ldaprdn .= ',o='.$this->config['ldap_organisation'];
+            }
         }
+        
 
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
@@ -167,7 +180,7 @@ if ($user = $this->GetUser()) {
 // on affiche le template
 //
 
-include_once('tools/libs/squelettephp.class.php');
+include_once('includes/squelettephp.class.php');
 
 // on cherche un template personnalise dans le repertoire themes/tools/bazar/templates
 $templatetoload = 'themes/tools/loginldap/templates/' . $template;
@@ -179,23 +192,22 @@ if (!is_file($templatetoload)) {
     }
 }
 
-$squel = new SquelettePhp($templatetoload);
-$squel->set(
-    array(
-        "connected" => $connected,
-        "user" => ((isset($user["name"])) ? $user["name"] : ((isset($_POST["name"])) ? $_POST["name"] : '')),
-        "email" => ((isset($user["email"])) ? $user["email"] : ((isset($_POST["email"])) ? $_POST["email"] : '')),
-        "incomingurl" => $incomingurl,
-        "signupurl" => $signupurl,
-        "profileurl" => $profileurl,
-        "userpage" => $userpage,
-        "PageMenuUser" => $PageMenuUser,
-        "btnclass" => $btnclass,
-        "nobtn" => $nobtn,
-        "error" => $error
-    )
-);
+$squel = new SquelettePhp($templatetoload, 'loginldap');
 
-$output = (!empty($class)) ? '<div class="'.$class.'">'."\n".$squel->analyser()."\n".'</div>'."\n" : $squel->analyser();
+$html = $squel->render(array(
+    "connected" => $connected,
+    "user" => ((isset($user["name"])) ? $user["name"] : ((isset($_POST["name"])) ? $_POST["name"] : '')),
+    "email" => ((isset($user["email"])) ? $user["email"] : ((isset($_POST["email"])) ? $_POST["email"] : '')),
+    "incomingurl" => $incomingurl,
+    "signupurl" => $signupurl,
+    "profileurl" => $profileurl,
+    "userpage" => $userpage,
+    "PageMenuUser" => $PageMenuUser,
+    "btnclass" => $btnclass,
+    "nobtn" => $nobtn,
+    "error" => $error
+));
+
+$output = (!empty($class)) ? '<div class="'.$class.'">'."\n".$html."\n".'</div>'."\n" : $html;
 
 echo $output;
