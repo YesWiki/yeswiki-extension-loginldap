@@ -15,10 +15,9 @@ if (!isset($this->config['ldap_port']) or empty($this->config['ldap_port'])) {
 // parametres non obligatoires, on mets une valeur vide par defaut si non existant
 if (!isset($this->config['ldap_base'])) {
     $this->config['ldap_base'] = '';
-}
-else {
+} else {
     if (!isset($this->config['ldap_organisation'])) {
-    $this->config['ldap_group'] = '';
+        $this->config['ldap_group'] = '';
     }
     if (!isset($this->config['ldap_group'])) {
         $this->config['ldap_group'] = '';
@@ -97,8 +96,7 @@ if ($_REQUEST["action"] == "ldaplogin") {
         
         if (!empty($this->config['ldap_base'])) {
             $ldaprdn .= ','.$this->config['ldap_base'];
-        }
-        else {
+        } else {
             if (!empty($this->config['ldap_group'])) {
                 $ldaprdn .= ',ou='.$this->config['ldap_group'];
             }
@@ -179,22 +177,7 @@ if ($user = $this->GetUser()) {
 //
 // on affiche le template
 //
-
-include_once('includes/squelettephp.class.php');
-
-// on cherche un template personnalise dans le repertoire themes/tools/bazar/templates
-$templatetoload = 'themes/tools/loginldap/templates/' . $template;
-
-if (!is_file($templatetoload)) {
-    $templatetoload = 'tools/loginldap/presentation/templates/' . $template;
-    if (!is_file($templatetoload)) {
-        exit('<div class="alert alert-danger">template non trouvé : '.$template.'.</div>');
-    }
-}
-
-$squel = new SquelettePhp($templatetoload, 'loginldap');
-
-$html = $squel->render(array(
+$html = $this->render('@loginldap/'.$template, [
     "connected" => $connected,
     "user" => ((isset($user["name"])) ? $user["name"] : ((isset($_POST["name"])) ? $_POST["name"] : '')),
     "email" => ((isset($user["email"])) ? $user["email"] : ((isset($_POST["email"])) ? $_POST["email"] : '')),
@@ -206,7 +189,7 @@ $html = $squel->render(array(
     "btnclass" => $btnclass,
     "nobtn" => $nobtn,
     "error" => $error
-));
+]);
 
 $output = (!empty($class)) ? '<div class="'.$class.'">'."\n".$html."\n".'</div>'."\n" : $html;
 
