@@ -115,22 +115,22 @@ if ($_REQUEST["action"] == "ldaplogin") {
             $filter="(uid=$username)";
             $justthese = array('uid', 'sn', 'GivenName', 'mail', 'cn');
 
-            $result = ldap_search($ldap, "o=enercoop", $filter, $justthese);
+            $result = ldap_search($ldap, $ldaprdn, $filter, $justthese);
             $info = ldap_get_entries($ldap, $result);
-            // echo '<ol>';
             for ($i=0; $i<$info["count"]; $i++) {
                 if ($info['count'] > 1) {
                     break;
                 }
-                // echo "<li><strong> ". $info[$i]["uid"][0] .", " . $info[$i]["cn"][0] ."</strong><br /> (" . $info[$i]["mail"][0] .")</li>\n";
                 $email = isset($info[$i]["mail"][0]) ? $info[$i]["mail"][0] : '';
-                $nomwiki = genere_nom_wiki($info[$i]['cn'][0]);
+                // if the uid is not numeric, we use it as username, otherwise we combine Surname and Name
+                $nomwiki = (!empty($info[$i]['uid'][0]) && !is_int($info[$i]['uid'][0])) ? $info[$i]['uid'][0] : genere_nom_wiki($info[$i]['cn'][0]);
                 $user = $this->LoadUser($nomwiki);
                 if ($user) {
                     $this->SetUser($user, 1);
                 } else {
                     $this->Query("insert into ".$this->config["table_prefix"]."users set ".
                     "signuptime = now(), ".
+                    "motto = '', ".
                     "name = '".mysqli_real_escape_string($this->dblink, $nomwiki)."', ".
                     "email = '".mysqli_real_escape_string($this->dblink, $email)."', ".
                     "password = md5('".mysqli_real_escape_string($this->dblink, $password)."')");
@@ -139,7 +139,6 @@ if ($_REQUEST["action"] == "ldaplogin") {
                     $this->SetUser($this->LoadUser($nomwiki));
                 }
             }
-            // echo '</ol>';
             @ldap_close($ldap);
         } else {
             $error = '<div class="alert alert-danger">Invalid username / password</div>';
