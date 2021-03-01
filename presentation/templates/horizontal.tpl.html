@@ -24,7 +24,7 @@
     </div>
 		<button type="submit" class="btn <?php echo $btnclass; ?> btn-primary"><i class="glyphicon glyphicon-user"></i> <?php echo _t('LOGIN_LOGIN'); ?></button>
 		<?php if ($signupurl != '' && $signupurl != '0') : ?><a class="btn <?php echo $btnclass; ?>" href="<?php echo $signupurl; ?>"><i class="glyphicon glyphicon-plus"></i> <?php echo _t('LOGIN_SIGNUP'); ?></a><?php endif; ?>
-		<input type="hidden" name="action" value="login" />
+		<input type="hidden" name="action" value="ldaplogin" />
 		<input type="hidden" name="incomingurl" value="<?php echo $userpage; ?>" />
 		<input type="hidden" name="remember" value="0" />
 	</form>
