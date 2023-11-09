@@ -24,11 +24,10 @@ if (!isset($this->config['ldap_base'])) {
     }
 }
 
-
 // Lecture des parametres de l'action
 
 // url d'inscription
-$signupurl = 'http'.((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+$signupurl = 'http'.((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443 || $_SERVER["HTTP_X_FORWARDED_SSL" ] == "on") ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 
 // url du profil
 $profileurl = $this->GetParameter('profileurl');
@@ -36,7 +35,7 @@ $profileurl = $this->GetParameter('profileurl');
 // sauvegarde de l'url d'ou on vient
 $incomingurl = $this->GetParameter('incomingurl');
 if (empty($incomingurl)) {
-    $incomingurl = 'http'.((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+    $incomingurl = 'http'.((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443 || $_SERVER["HTTP_X_FORWARDED_SSL" ] == "on") ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 }
 
 $userpage = $this->GetParameter("userpage");
@@ -93,7 +92,7 @@ if ($_REQUEST["action"] == "ldaplogin") {
         $password = $_POST['password'];
 
         $ldaprdn = 'uid='.$username;
-        
+
         if (!empty($this->config['ldap_base'])) {
             $ldaprdn .= ','.$this->config['ldap_base'];
         } else {
@@ -104,7 +103,7 @@ if ($_REQUEST["action"] == "ldaplogin") {
                 $ldaprdn .= ',o='.$this->config['ldap_organisation'];
             }
         }
-        
+
 
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
