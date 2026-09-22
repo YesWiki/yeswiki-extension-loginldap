@@ -33,6 +33,12 @@ $GLOBALS['translations'] = array_merge(
     array(
         'LDAP_USERNAME' => 'Utilisateur LDAP',
         'LDAP_MESSAGE_INFO' => 'L\'identification est réservée aux personnes inscrites dans l\'annuaire LDAP.',
-
+        'LDAP_CONFIG_MISSING' => 'L\'extension loginldap n\'est pas configurée. Il manque dans wakka.config.php :',
+        'LDAP_PHP_EXTENSION_MISSING' => 'L\'extension PHP ldap n\'est pas installée sur ce serveur.',
+        'LDAP_FALLBACK_NOTICE' => 'La connexion par l\'annuaire est désactivée, le formulaire habituel reste utilisable.',
+        'LDAP_SERVER_UNREACHABLE' => 'L\'annuaire LDAP ne répond pas ou est mal configuré.',
+        'LDAP_INVALID_CREDENTIALS' => 'Identifiant ou mot de passe incorrect.',
+        'LDAP_READ_DOC' => 'Lire la documentation de l\'extension',
+        'LDAP_COOKIES_REQUIRED' => 'Vous devez accepter les cookies pour pouvoir vous connecter.',
     )
 );
